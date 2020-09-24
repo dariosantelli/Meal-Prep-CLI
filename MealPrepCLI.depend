@@ -1,0 +1,4 @@
+# depslib dependency file v1.0
+1600701853 source:/home/dario/projects/MealPrepCLI/main.cpp
+	<iostream>
+
