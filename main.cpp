@@ -1,11 +1,15 @@
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
 
 using namespace std;
 
 class Recipe
 {
 public:
+    string recipe_name {};
     string ingredients {};
     string descriptors {};
     int ingred[3] {4, 5, 6};
@@ -34,12 +38,37 @@ void OpenFile()
 //can create new recipe and add to text file
 //format of data in text file: RecipeName, Ingredients, Descriptor /n
 
-void ReadFromFile(int line_number)
+//Delimit target with ',' and modify output vector
+void delimit(string const &str, vector<std::string> &out)
 {
-    //read specific line
+	stringstream ss(str);
+
+	string s;
+	while (getline(ss, s, ',')) {
+		out.push_back(s);
+	}
 }
 
-#Add a new entry to the text file in the form "RecipeName,Ingredients,Descriptor"
+//Read each line from the text file, create a recipe object from each line
+void ReadFromFile()
+{
+    string line;
+    ifstream myfile ("example.txt");
+    if (myfile.is_open())
+    {
+        while ( getline (myfile,line) )
+        {
+            std::vector<std::string> out;
+            delimit(line, out);
+            cout << line << '\n';
+            for (int i = 0; i<3; i++)
+                cout << out[i] << endl;
+        }
+        myfile.close();
+    }
+}
+
+//Add a new entry to the text file in the form "RecipeName,Ingredients,Descriptor"
 void NewEntry()
 {
     string entry {};
@@ -69,13 +98,27 @@ void NewEntry()
 
 int main()
 {
-    OpenFile();
-    NewEntry();
-    cout << "Hello world!" << endl;
-    Recipe test {};
-    test.ingredients = "fries";
-    cout << test.ingredients << endl;
-    test.print();
-    cout << test.ingred[0];
+    /*
+    std::string s = "C,C++,Java";
+    std::vector<std::string> out;
+	delimit(s, out);
+
+	string reffe = out[1];
+	cout << reffe;
+
+	for (int i = 0; i<3; i++)
+            cout << out[i] << endl;
+    */
+    //OpenFile();
+    ReadFromFile();
+    //NewEntry();
+    //Recipe test {};
+    //test.ingredients = "fries";
+    //cout << test.ingredients << endl;
+    //test.print();
+    //cout << test.ingred[0];
+    //string test [2] {delimit("dog")};
+    //test = delimit("dog");
+    //cout << delimit("dog");
     return 0;
 }
