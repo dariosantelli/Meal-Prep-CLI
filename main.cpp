@@ -13,6 +13,7 @@ public:
     string recipe_name {};
     string ingredients {};
     string descriptors {};
+    int line_number {};
 
     void multi_line_print()
     {
@@ -27,6 +28,7 @@ public:
     {
         cout << "Recipe: " << recipe_name << "; Ingredients: " << ingredients << "; Descriptions: " << descriptors << endl;
     }
+
 };
 
 void OpenFile()
@@ -52,8 +54,8 @@ void delimit(string const &str, vector<std::string> &out)
 //Reads each line of file and creates a recipe object for each, adds these objects to results vector
 void ReadFromFile(vector<Recipe> &results)
 {
-    Recipe obj [3] {};
     string line;
+    int line_number = 1;
     ifstream myfile ("example.txt");
     if (myfile.is_open())
     {
@@ -65,6 +67,9 @@ void ReadFromFile(vector<Recipe> &results)
             working.recipe_name = out[0];
             working.ingredients = out[1];
             working.descriptors = out[2];
+            working.line_number = line_number;
+
+            line_number ++;
 
             results.push_back(working);
             //cout << obj << endl;
@@ -128,26 +133,30 @@ int main()
 {
     //Read text file and populate results vector with recipe objects
     vector<Recipe> results {};
-    ReadFromFile(results);
+    ReadFromFile(results);\
 
     while (true)  {
 
-        cout << "Press a number on the keypad and press enter for more options" << endl;
+        cout << endl << "Press a number on the keypad and press enter" << endl;
         cout << "1: View recipes" << endl;
         cout << "2: Add a recipe" << endl;
         cout << "3: Edit an existing recipe" << endl;
         cout << "8: Tutorial/Help" << endl;
-        cout << "9: Exit program" << endl;
+        cout << "9: Exit program" << endl << endl;
 
         int input {};
         cin >> input;
         if (input == 1)   {
+            cout << endl;
 
-            for(int i=0; i < results.size(); i++)
+            for(int i=0; i < results.size(); i++) {
+                cout << i+1 << ": ";
                 results.at(i).single_line_print();
-                //WaitForEnterKey();
+            }
 
-                continue;
+            //WaitForEnterKey();
+
+            continue;
 
         }   else if (input == 2)  {
                 NewEntry();
@@ -169,6 +178,7 @@ int main()
         return 0;
     }
 }
+
 
 
 /* For quick reference:
@@ -194,3 +204,6 @@ int main()
     //need to implement read and append functions to text file, then search and modify functions for those entries
     //reads all data from text file into separate objects and stores in memory
     //format of data in text file: RecipeName, Ingredients, Descriptor /n
+
+    //cout << results[i].line_number;
+    //cout << results[i].recipe_name;
