@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <limits>
 
 using namespace std;
 
@@ -13,13 +14,18 @@ public:
     string ingredients {};
     string descriptors {};
 
-    void print()
+    void multi_line_print()
     {
         cout << endl;
         cout << "Recipe: " << recipe_name << endl;
         cout << "Ingredients: " << ingredients << endl;
         cout << "Decriptions: " << descriptors << endl;
         cout << endl;
+    }
+
+    void single_line_print()
+    {
+        cout << "Recipe: " << recipe_name << "; Ingredients: " << ingredients << "; Descriptions: " << descriptors << endl;
     }
 };
 
@@ -31,10 +37,6 @@ void OpenFile()
     getline(myfile, line);
     cout << line << endl;
 }
-
-//need to implement read and append functions to text file, then search and modify functions for those entries
-//reads all data from text file into separate objects and stores in memory
-//format of data in text file: RecipeName, Ingredients, Descriptor /n
 
 //Delimit target with ',' and modify output vector
 void delimit(string const &str, vector<std::string> &out)
@@ -105,9 +107,71 @@ void NewEntry()
     cout << "Recipe entered: " << entry << endl;
 }
 
+void WaitForEnterKey()
+{
+    /* Wait for user to press enter key
+    int c;
+    printf( "Press ENTER to continue... " );
+    fflush( stdout );
+    do c = getchar(); while ((c != '\n') && (c != EOF));
+
+    do  {
+        cout << '\n' << "Press ENTER to continue...";
+    }
+    while (cin.get() != '\n');
+
+    cin.ignore();
+    */
+}
+
 int main()
 {
-    /*
+    //Read text file and populate results vector with recipe objects
+    vector<Recipe> results {};
+    ReadFromFile(results);
+
+    while (true)  {
+
+        cout << "Press a number on the keypad and press enter for more options" << endl;
+        cout << "1: View recipes" << endl;
+        cout << "2: Add a recipe" << endl;
+        cout << "3: Edit an existing recipe" << endl;
+        cout << "8: Tutorial/Help" << endl;
+        cout << "9: Exit program" << endl;
+
+        int input {};
+        cin >> input;
+        if (input == 1)   {
+
+            for(int i=0; i < results.size(); i++)
+                results.at(i).single_line_print();
+                //WaitForEnterKey();
+
+                continue;
+
+        }   else if (input == 2)  {
+                NewEntry();
+                continue;
+
+        }   else if (input == 3)  {
+                cout << "Input is: " << input << "(should be 3)" << endl;
+
+        }   else if (input == 8)  {
+                cout << "Input is: " << input << "(should be 8)" << endl;
+
+        }   else if (input == 9)  {
+                break;
+
+        }   else {
+                cout << "Invalid number entered, try again." << endl;
+                continue;
+        }
+        return 0;
+    }
+}
+
+
+/* For quick reference:
     std::string s = "C,C++,Java";
     std::vector<std::string> out;
 	delimit(s, out);
@@ -119,43 +183,14 @@ int main()
             cout << out[i] << endl;
     */
     //OpenFile();
-    vector<Recipe> results {};
-    ReadFromFile(results);
-    for(int i=0; i < results.size(); i++)
-        cout << results.at(i).ingredients << ' ';
+
     //NewEntry();
-    results.at(0).print();
+    //results.at(0).multi_line_print();
     //Recipe test {};
     //test.ingredients = "fries";
     //cout << test.ingredients << endl;
     //test.print();
 
-    /*
-    int input {};
-    cin >> input;
-    if (input == 1)   {
-        cout << "Input is: " << input << "(should be 1)" << endl;
-    }   else if (input == 2)  {
-            cout << "Input is: " << input << "(should be 2)" << endl;
-    }   else if (input == 3)  {
-            cout << "Input is: " << input << "(should be 3)" << endl;
-    }   else if (input == 8)  {
-            cout << "Input is: " << input << "(should be 8)" << endl;
-    }   else if (input == 9)  {
-            cout << "Input is: " << input << "(should be 9)" << endl;
-    }   else {
-        cout << "Invalid number entered, try again." << endl;
-    }
-    return 0;
-    */
-}
-
-/*
-GUI Layout:
-Press a number on the keypad and press enter for more options:
-1: View recipes
-2: Add a recipe
-3: Edit an existing recipe
-8: Tutorial/Help
-9: Exit program
-*/
+    //need to implement read and append functions to text file, then search and modify functions for those entries
+    //reads all data from text file into separate objects and stores in memory
+    //format of data in text file: RecipeName, Ingredients, Descriptor /n
