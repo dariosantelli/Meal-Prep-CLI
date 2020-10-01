@@ -51,6 +51,11 @@ void delimit(string const &str, vector<std::string> &out)
 	}
 }
 
+void AddEntryToResults()
+{
+    //basically take ReadFromFile functionality
+}
+
 //Reads each line of file and creates a recipe object for each, adds these objects to results vector
 void ReadFromFile(vector<Recipe> &results)
 {
@@ -72,12 +77,7 @@ void ReadFromFile(vector<Recipe> &results)
             line_number ++;
 
             results.push_back(working);
-            //cout << obj << endl;
-            /*
-            cout << "Working Recipe Name: " << working.recipe_name << endl;
-            cout << "Working Ingredients: " << working.ingredients << endl;
-            cout << "Working Descriptors: " << working.descriptors << endl;
-            */
+
         }
 
     }
@@ -85,7 +85,7 @@ void ReadFromFile(vector<Recipe> &results)
 }
 
 //Add a new entry to the text file in the form "RecipeName,Ingredients,Descriptor"
-void NewEntry()
+void NewEntry(vector<Recipe> &results)
 {
     string entry {};
     string temp {};
@@ -110,6 +110,38 @@ void NewEntry()
 
 
     cout << "Recipe entered: " << entry << endl;
+
+    int last_line_number {results.size()};
+    Recipe working {};
+    std::vector<std::string> out;
+    delimit(entry, out);
+    working.recipe_name = out[0];
+    working.ingredients = out[1];
+    working.descriptors = out[2];
+    working.line_number = last_line_number + 1;
+
+    results.push_back(working);
+}
+
+void EditRecipe(vector<Recipe> &results)
+{
+    //null
+    //display recipes in single line format
+    //ask user what recipe they'd like to edit and to enter line number of that recipe
+    //change specific line that the recipe is on in txt
+    //re-run readfromfile
+    cout << "Type the number of the recipe you'd like to edit, then press ENTER" << endl << endl;
+
+    for(int i=0; i < results.size(); i++) {
+                cout << i+1 << ": ";
+                results.at(i).single_line_print();
+    }
+
+    int temp {};
+    cin >> temp;
+    cout << "You entered: " << temp << endl;
+    cout << results[temp-1].recipe_name << endl;
+
 }
 
 void WaitForEnterKey()
@@ -133,7 +165,10 @@ int main()
 {
     //Read text file and populate results vector with recipe objects
     vector<Recipe> results {};
-    ReadFromFile(results);\
+    ReadFromFile(results);
+
+    int n = results.size();
+    cout << n;
 
     while (true)  {
 
@@ -154,16 +189,22 @@ int main()
                 results.at(i).single_line_print();
             }
 
+            /*
+            int temp1 {&results};
+            cout << *temp1;
+            */
+
             //WaitForEnterKey();
 
             continue;
 
         }   else if (input == 2)  {
-                NewEntry();
+                NewEntry(results);
                 continue;
 
         }   else if (input == 3)  {
-                cout << "Input is: " << input << "(should be 3)" << endl;
+                EditRecipe(results);
+                continue;
 
         }   else if (input == 8)  {
                 cout << "Input is: " << input << "(should be 8)" << endl;
@@ -172,7 +213,7 @@ int main()
                 break;
 
         }   else {
-                cout << "Invalid number entered, try again." << endl;
+                cout << endl << "Invalid number entered, try again." << endl;
                 continue;
         }
         return 0;
