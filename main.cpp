@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <limits>
 
 using namespace std;
 
@@ -128,37 +127,63 @@ void EditRecipe(vector<Recipe> &results)
     //null
     //display recipes in single line format
     //ask user what recipe they'd like to edit and to enter line number of that recipe
-    //change specific line that the recipe is on in txt
-    //re-run readfromfile
-    cout << "Type the number of the recipe you'd like to edit, then press ENTER" << endl << endl;
+    //change specific recipe in results vector (ask for each input one by one)
+    //overwrite entire txt file with new results vector
+    cout << endl << "Type the number of the recipe you'd like to edit, then press ENTER" << endl << endl;
 
     for(int i=0; i < results.size(); i++) {
                 cout << i+1 << ": ";
                 results.at(i).single_line_print();
     }
 
-    int temp {};
+    int entered_line_number {};
+    cin >> entered_line_number;
+    cout << "You entered: " << entered_line_number << endl;
+
+    string temp {};
+    cout << "Current recipe name is: " << results[entered_line_number-1].recipe_name << endl;
+    cout << "Enter a new recipe name: ";
     cin >> temp;
-    cout << "You entered: " << temp << endl;
-    cout << results[temp-1].recipe_name << endl;
+    results[entered_line_number-1].recipe_name = temp;
+    temp = {};
+
+    cout << "Current ingredients are: " << results[entered_line_number-1].ingredients << endl;
+    cout << "Enter new ingredients: ";
+    cin >> temp;
+    results[entered_line_number-1].ingredients = temp;
+    temp = {};
+
+    cout << "Current descriptors are: " << results[entered_line_number-1].descriptors << endl;
+    cout << "Enter new descriptors: ";
+    cin >> temp;
+    results[entered_line_number-1].descriptors = temp;
+    temp = {};
+
+
+
 
 }
 
-void WaitForEnterKey()
+void PrintUserPrompt()
 {
-    /* Wait for user to press enter key
-    int c;
-    printf( "Press ENTER to continue... " );
-    fflush( stdout );
-    do c = getchar(); while ((c != '\n') && (c != EOF));
+    cout << endl << "Press a number on the keypad and press enter" << endl;
+    cout << "1: View Recipes" << endl;
+    cout << "2: Add a Recipe" << endl;
+    cout << "3: Edit an Existing Recipe" << endl;
+    cout << "8: Tutorial/Help" << endl;
+    cout << "9: Exit Program" << endl << endl;
+}
 
-    do  {
-        cout << '\n' << "Press ENTER to continue...";
-    }
-    while (cin.get() != '\n');
-
-    cin.ignore();
-    */
+void PrintTutorial()
+{
+    //print here
+    cout << endl << endl << "Tutorial/Help" << endl << endl;
+    cout << "This program reads from an associated text file" << endl;
+    cout << "1 - View Recipes: View all recipes available in the storage file" << endl;
+    cout << "2 - Add a Recipe: Follow the prompts to add a recipe to the storage file" << endl;
+    cout << "3 - Edit an Existing Recipe: F" << endl;
+    cout << "8 - Tutorial: This" << endl;
+    cout << "9 - Exit Program: Exit" << endl;
 }
 
 int main()
@@ -167,20 +192,13 @@ int main()
     vector<Recipe> results {};
     ReadFromFile(results);
 
-    int n = results.size();
-    cout << n;
-
     while (true)  {
 
-        cout << endl << "Press a number on the keypad and press enter" << endl;
-        cout << "1: View recipes" << endl;
-        cout << "2: Add a recipe" << endl;
-        cout << "3: Edit an existing recipe" << endl;
-        cout << "8: Tutorial/Help" << endl;
-        cout << "9: Exit program" << endl << endl;
+        PrintUserPrompt();
 
         int input {};
         cin >> input;
+
         if (input == 1)   {
             cout << endl;
 
@@ -188,13 +206,6 @@ int main()
                 cout << i+1 << ": ";
                 results.at(i).single_line_print();
             }
-
-            /*
-            int temp1 {&results};
-            cout << *temp1;
-            */
-
-            //WaitForEnterKey();
 
             continue;
 
@@ -207,7 +218,8 @@ int main()
                 continue;
 
         }   else if (input == 8)  {
-                cout << "Input is: " << input << "(should be 8)" << endl;
+                PrintTutorial();
+                continue;
 
         }   else if (input == 9)  {
                 break;
@@ -220,31 +232,8 @@ int main()
     }
 }
 
-
-
-/* For quick reference:
-    std::string s = "C,C++,Java";
-    std::vector<std::string> out;
-	delimit(s, out);
-
-	string reffe = out[1];
-	cout << reffe;
-
-	for (int i = 0; i<3; i++)
-            cout << out[i] << endl;
-    */
-    //OpenFile();
-
-    //NewEntry();
-    //results.at(0).multi_line_print();
-    //Recipe test {};
-    //test.ingredients = "fries";
-    //cout << test.ingredients << endl;
-    //test.print();
+    //For quick reference:
 
     //need to implement read and append functions to text file, then search and modify functions for those entries
     //reads all data from text file into separate objects and stores in memory
     //format of data in text file: RecipeName, Ingredients, Descriptor /n
-
-    //cout << results[i].line_number;
-    //cout << results[i].recipe_name;
