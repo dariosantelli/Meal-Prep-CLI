@@ -10,6 +10,9 @@ class Recipe
 {
 public:
     string recipe_name {};
+    //std::vector<std::string> ingredients {};
+    //std::vector<std::string> directions {};
+    //std::vector<std::string> keywords {};
     string ingredients {};
     string descriptors {};
     int line_number {};
@@ -34,7 +37,7 @@ void OpenFile()
 {
     ifstream myfile;
     string line;
-    myfile.open ("example.txt", ios::out | ios::app);
+    myfile.open ("mealprepdata.txt", ios::out | ios::app);
     getline(myfile, line);
     cout << line << endl;
 }
@@ -59,9 +62,10 @@ void AddEntryToResults()
 //Reads each line of file and creates a recipe object for each, adds these objects to results vector
 void ReadFromFile(vector<Recipe> &results)
 {
+
     string line;
     int line_number = 1;
-    ifstream myfile ("example.txt");
+    ifstream myfile ("mealprepdata.txt");
     if (myfile.is_open())
     {
         while ( getline (myfile,line) )
@@ -105,7 +109,7 @@ void NewEntry(vector<Recipe> &results)
     temp = {};
 
     ofstream myfile;
-    myfile.open ("example.txt", ios::out | ios::app);
+    myfile.open ("mealprepdata.txt", ios::out | ios::app);
     myfile << entry << endl;
 
 
@@ -125,7 +129,7 @@ void NewEntry(vector<Recipe> &results)
 
 void WriteResultsToFile(vector<Recipe> &results)
 {
-    ofstream myfile ("example.txt");
+    ofstream myfile ("mealprepdata.txt");
     if (myfile.is_open())   {
         for (int i = 0; i < results.size(); i++)  {
             myfile << results[i].recipe_name << "," << results[i].ingredients << "," << results[i].descriptors << endl;
@@ -172,9 +176,6 @@ void EditRecipe(vector<Recipe> &results)
     results[entered_line_number-1].single_line_print();
 
     WriteResultsToFile(results);
-
-
-
 
 }
 
@@ -251,3 +252,19 @@ int main()
     //need to implement read and append functions to text file, then search and modify functions for those entries
     //reads all data from text file into separate objects and stores in memory
     //format of data in text file: RecipeName, Ingredients, Descriptor /n
+
+    /*
+    Structure of output
+    1. Recipe Name:
+    2. Comprehensive list of ingredients
+    3. Directions
+    4. Keywords
+
+    storage structure in recipe object: [recipename,[vector_of_ingredients],[vector_of_directions],[vector_of_keywords]]
+
+    current storage in txt file: recipename,ingredient1,ingredient2,ingredient3,direction1,direction2,direction3,keyword1,keyword2
+    updated: recipename,{ingredient1,ingredient2,ingredient3},{direction1,direction2,direction3},{keyword1,keyword2}
+
+    need to remove std namespace and replace all calls with std::
+
+    */
