@@ -53,6 +53,7 @@ void delimit(string const &str, vector<std::string> &out)
 void AddEntryToResults()
 {
     //basically take ReadFromFile functionality
+
 }
 
 //Reads each line of file and creates a recipe object for each, adds these objects to results vector
@@ -122,10 +123,18 @@ void NewEntry(vector<Recipe> &results)
     results.push_back(working);
 }
 
+void WriteResultsToFile(vector<Recipe> &results)
+{
+    ofstream myfile ("example.txt");
+    if (myfile.is_open())   {
+        for (int i = 0; i < results.size(); i++)  {
+            myfile << results[i].recipe_name << "," << results[i].ingredients << "," << results[i].descriptors << endl;
+        }
+    }
+}
+
 void EditRecipe(vector<Recipe> &results)
 {
-    //null
-    //display recipes in single line format
     //ask user what recipe they'd like to edit and to enter line number of that recipe
     //change specific recipe in results vector (ask for each input one by one)
     //overwrite entire txt file with new results vector
@@ -138,26 +147,31 @@ void EditRecipe(vector<Recipe> &results)
 
     int entered_line_number {};
     cin >> entered_line_number;
-    cout << "You entered: " << entered_line_number << endl;
+    cout << endl << "You entered: " << entered_line_number << endl;
 
     string temp {};
-    cout << "Current recipe name is: " << results[entered_line_number-1].recipe_name << endl;
+    cout << endl << "Current recipe name is: " << results[entered_line_number-1].recipe_name << endl;
     cout << "Enter a new recipe name: ";
     cin >> temp;
     results[entered_line_number-1].recipe_name = temp;
     temp = {};
 
-    cout << "Current ingredients are: " << results[entered_line_number-1].ingredients << endl;
+    cout << endl << "Current ingredients are: " << results[entered_line_number-1].ingredients << endl;
     cout << "Enter new ingredients: ";
     cin >> temp;
     results[entered_line_number-1].ingredients = temp;
     temp = {};
 
-    cout << "Current descriptors are: " << results[entered_line_number-1].descriptors << endl;
+    cout << endl << "Current descriptors are: " << results[entered_line_number-1].descriptors << endl;
     cout << "Enter new descriptors: ";
     cin >> temp;
     results[entered_line_number-1].descriptors = temp;
     temp = {};
+
+    cout << endl << "Recipe " << entered_line_number << " changed to: ";
+    results[entered_line_number-1].single_line_print();
+
+    WriteResultsToFile(results);
 
 
 
