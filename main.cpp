@@ -88,7 +88,6 @@ void InputDataProcessor(std::string const &line, std::string &recipe_name, std::
 
 	std::stringstream ingredients_input(temporary[0]);
     while (getline(ingredients_input, s, ';'))    {
-        std::cout << s << std::endl;
         ingredients.push_back(s);
     }
 
@@ -97,7 +96,6 @@ void InputDataProcessor(std::string const &line, std::string &recipe_name, std::
 
     std::stringstream directions_input(temporary[1]);
     while (getline(directions_input, s, ';'))    {
-        std::cout << s << std::endl;
         directions.push_back(s);
     }
 
@@ -106,7 +104,6 @@ void InputDataProcessor(std::string const &line, std::string &recipe_name, std::
 
     std::stringstream keywords_input(temporary[2]);
     while (getline(keywords_input, s, ';'))    {
-        std::cout << s << std::endl;
         keywords.push_back(s);
     }
 
@@ -117,19 +114,24 @@ void InputDataProcessor(std::string const &line, std::string &recipe_name, std::
 
 }
 
-void BuildRecipeObject(std:string line, std:vector<Recipe> &output, int line_number)
+Recipe BuildRecipeObject(std::string line, std::vector<std::vector<std::string>> &output, int line_number)
 {
     Recipe current {};
-    delimit(line, output);
-    current.recipe_name = output[0];
-    current.ingredients = output[1];
-    current.directions = output[2];
-    current.keywords = output[3];
+    std::string recipe_name {};
+
+    InputDataProcessor(line, recipe_name, output);
+
+    current.recipe_name = recipe_name;
+    current.ingredients = output[0];
+    current.directions = output[1];
+    current.keywords = output[2];
     current.line_number = line_number;
 
     return current;
 
 }
+
+
 
 //Reads each line of file and creates a recipe object for each, adds these objects to results vector
 void ReadFromFile(vector<Recipe> &results)
@@ -142,8 +144,8 @@ void ReadFromFile(vector<Recipe> &results)
     {
         while ( getline (myfile,line) )
         {
-            std::vector<std::string> output;
-            Recipe current {BuildRecipeObject(line, output, line_number)};
+            std::vector<std::vector<std::string>> output;
+            Recipe current  = BuildRecipeObject(line, output, line_number);
 
             line_number ++;
 
@@ -154,6 +156,8 @@ void ReadFromFile(vector<Recipe> &results)
     }
 
 }
+
+/*
 
 //Add a new entry to the text file in the form "RecipeName,Ingredients,Descriptor"
 void NewEntry(vector<Recipe> &results)
@@ -245,6 +249,7 @@ void EditRecipe(vector<Recipe> &results)
     WriteResultsToFile(results);
 
 }
+*/
 
 void PrintUserPrompt()
 {
@@ -274,6 +279,8 @@ int main()
     vector<Recipe> results {};
     ReadFromFile(results);
 
+
+    /*
     while (true)  {
 
         PrintUserPrompt();
@@ -312,6 +319,7 @@ int main()
         }
         return 0;
     }
+    */
 }
 
     //For quick reference:
