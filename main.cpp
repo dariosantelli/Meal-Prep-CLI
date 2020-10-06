@@ -9,27 +9,42 @@ using namespace std;
 class Recipe
 {
 public:
-    string recipe_name {};
-    //std::vector<std::string> ingredients {};
-    //std::vector<std::string> directions {};
-    //std::vector<std::string> keywords {};
-    string ingredients {};
-    string descriptors {};
+    std::string recipe_name {};
+    std::vector<std::string> ingredients {};
+    std::vector<std::string> directions {};
+    std::vector<std::string> keywords {};
     int line_number {};
 
     void multi_line_print()
     {
         cout << endl;
         cout << "Recipe: " << recipe_name << endl;
-        cout << "Ingredients: " << ingredients << endl;
-        cout << "Decriptions: " << descriptors << endl;
+
+        cout << "Ingredients: " << endl;
+        for (int i = 0; i < ingredients.size(); i++)    {
+            cout << "- " << ingredients[i] << endl;
+        }
+
+        cout << "Directions: " << endl;
+        for (int i = 0; i < directions.size(); i++) {
+            cout << i + 1 << ". " << directions[i] << endl;
+        }
+
+        cout << "Keywords: " << endl;
+        for (int i = 0; i < keywords.size(); i++)   {
+            cout << "- " << keywords[i] << endl;
+        }
+
         cout << endl;
     }
 
+    /*
     void single_line_print()
     {
+        cout << "Recipe: " << recipe_name <<
         cout << "Recipe: " << recipe_name << "; Ingredients: " << ingredients << "; Descriptions: " << descriptors << endl;
     }
+    */
 
 };
 
@@ -42,20 +57,77 @@ void OpenFile()
     cout << line << endl;
 }
 
-//Delimit target with ',' and modify output vector
-void delimit(string const &str, vector<std::string> &out)
+//takes string of the input style, outputs recipe name into variable, modifies out vector to be a vector of vectors containing strings
+void InputDataProcessor(std::string const &line, std::string &recipe_name, std::vector<std::vector<std::string>> &out)
 {
-	stringstream ss(str);
+    //takes input in the form of "recipename,{ingredient1;ingredient2;ingredient3},{direction1;direction2;direction3},{keyword1;keyword2}"
+    //outputs the recipe name to the recipe_name variable
+    //creates an individual vector of strings for ingredients, directions, and keywords, then stores those three vectors of strings in the out vector
 
-	string s;
+    std::vector<std::string> temporary {};
+	std::stringstream ss(line); //input line
+	std::string s; //output string
+
+	//delimit input string by commas and store vectored variables in temporary vector
 	while (getline(ss, s, ',')) {
-		out.push_back(s);
+        if (s[0] == '{' and s.back() == '}')   {
+
+            //removes bracket chars
+            s.erase(s.end()-1);
+            s.erase(s.begin());
+
+            temporary.push_back(s);
+            continue;
+        }
+        recipe_name = s;
 	}
+
+
+	//delimit ingredients from temporary vector into individual ingredients vector
+	std::vector<std::string> ingredients {};
+
+	std::stringstream ingredients_input(temporary[0]);
+    while (getline(ingredients_input, s, ';'))    {
+        std::cout << s << std::endl;
+        ingredients.push_back(s);
+    }
+
+    //delimit directions from temporary vector into individual directions vector
+    std::vector<std::string> directions {};
+
+    std::stringstream directions_input(temporary[1]);
+    while (getline(directions_input, s, ';'))    {
+        std::cout << s << std::endl;
+        directions.push_back(s);
+    }
+
+    //delimit keywords from temporary vector into individual keywords vector
+	std::vector<std::string> keywords {};
+
+    std::stringstream keywords_input(temporary[2]);
+    while (getline(keywords_input, s, ';'))    {
+        std::cout << s << std::endl;
+        keywords.push_back(s);
+    }
+
+    //add the three sub-vectors of strings to the main output vector
+	out.push_back(ingredients);
+	out.push_back(directions);
+	out.push_back(keywords);
+
 }
 
-void AddEntryToResults()
+void BuildRecipeObject(std:string line, std:vector<Recipe> &output, int line_number)
 {
-    //basically take ReadFromFile functionality
+    Recipe current {};
+    delimit(line, output);
+    current.recipe_name = output[0];
+    current.ingredients = output[1];
+    current.directions = output[2];
+    current.keywords = output[3];
+    current.line_number = line_number;
+
+    return current;
 
 }
 
@@ -70,17 +142,12 @@ void ReadFromFile(vector<Recipe> &results)
     {
         while ( getline (myfile,line) )
         {
-            Recipe working {};
-            std::vector<std::string> out;
-            delimit(line, out);
-            working.recipe_name = out[0];
-            working.ingredients = out[1];
-            working.descriptors = out[2];
-            working.line_number = line_number;
+            std::vector<std::string> output;
+            Recipe current {BuildRecipeObject(line, output, line_number)};
 
             line_number ++;
 
-            results.push_back(working);
+            results.push_back(current);
 
         }
 
