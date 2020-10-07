@@ -42,25 +42,14 @@ public:
         std::cout << std::endl;
     }
 
-    /*
+
     void single_line_print()
     {
-        cout << "Recipe: " << recipe_name <<
-        cout << "Recipe: " << recipe_name << "; Ingredients: " << ingredients << "; Descriptions: " << descriptors << endl;
+        std::cout << recipe_name << std::endl;
     }
-    */
+
 
 };
-
-
-void OpenFile()
-{
-    ifstream myfile;
-    string line;
-    myfile.open ("mealprepdata.txt", ios::out | ios::app);
-    getline(myfile, line);
-    cout << line << endl;
-}
 
 //takes string of the input style, outputs recipe name into variable, modifies out vector to be a vector of vectors containing strings
 void InputDataProcessor(std::string &line, std::string &recipe_name, std::vector<std::vector<std::string>> &out)
@@ -169,7 +158,6 @@ void NewEntry(vector<Recipe> &results)
 {
     string entry {};
     string temp {};
-    string tempoR {};
     cout << "Enter a recipe name: ";
     getline(cin >> ws, temp);
     entry.append(temp + ",{");
@@ -262,9 +250,10 @@ void EditRecipe(vector<Recipe> &results)
 void PrintUserPrompt()
 {
     cout << endl << "Press a number on the keypad and press enter" << endl;
-    cout << "1: View Recipes" << endl;
-    cout << "2: Add a Recipe" << endl;
-    cout << "3: Edit an Existing Recipe" << endl;
+    cout << "1: View all recipes at a glance" << endl;
+    cout << "2: View full details of a recipe" << endl;
+    cout << "3: Add a Recipe" << endl;
+    cout << "4: Edit an Existing Recipe" << endl;
     cout << "8: Tutorial/Help" << endl;
     cout << "9: Exit Program" << endl << endl;
 }
@@ -279,6 +268,23 @@ void PrintTutorial()
     cout << "3 - Edit an Existing Recipe: F" << endl;
     cout << "8 - Tutorial: This" << endl;
     cout << "9 - Exit Program: Exit" << endl;
+}
+
+void ViewFullRecipe(vector<Recipe> &results)
+{
+    //NEED TO ADD CATCH FOR OUT OF BOUND NUMBERS
+    cout << endl << "Type the number of the recipe you'd like to view, then press ENTER" << endl << endl;
+
+    for(int i=0; i < results.size(); i++) {
+                cout << i+1 << ": ";
+                results.at(i).single_line_print();
+    }
+
+    int entered_line_number {};
+    cin >> entered_line_number;
+    cout << endl << "You entered: " << entered_line_number << endl;
+
+    results.at(entered_line_number-1).multi_line_print();
 }
 
 int main()
@@ -297,19 +303,22 @@ int main()
         if (input == 1)   {
             cout << endl;
 
-
             for(int i=0; i < results.size(); i++) {
                 cout << i+1 << ": ";
-                results.at(i).multi_line_print();
+                results.at(i).single_line_print();
             }
 
             continue;
 
         }   else if (input == 2)  {
-                NewEntry(results);
+                ViewFullRecipe(results);
                 continue;
 
         }   else if (input == 3)  {
+                NewEntry(results);
+                continue;
+
+        }   else if (input == 4)  {
                 //EditRecipe(results);
                 continue;
 
