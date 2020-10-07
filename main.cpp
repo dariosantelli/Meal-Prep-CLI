@@ -17,25 +17,29 @@ public:
 
     void multi_line_print()
     {
-        cout << endl;
-        cout << "Recipe: " << recipe_name << endl;
 
-        cout << "Ingredients: " << endl;
+        std::cout << std::endl;
+        std::cout << "Recipe Name: " << recipe_name << std::endl;
+        std::cout << std::endl;
+
+        std::cout << "Ingredients:" << std::endl;
         for (int i = 0; i < ingredients.size(); i++)    {
-            cout << "- " << ingredients[i] << endl;
+            std::cout << " - " << ingredients[i] << std::endl;
         }
+        std::cout << std::endl;
 
-        cout << "Directions: " << endl;
+        std::cout << "Directions: " << std::endl;
         for (int i = 0; i < directions.size(); i++) {
-            cout << i + 1 << ". " << directions[i] << endl;
+            std::cout << i + 1 << ". " << directions[i] << std::endl;
         }
+        std::cout << std::endl;
 
-        cout << "Keywords: " << endl;
+        std::cout << "Keywords: " << std::endl;
         for (int i = 0; i < keywords.size(); i++)   {
-            cout << "- " << keywords[i] << endl;
+            std::cout << " - " << keywords[i] << std::endl;
         }
 
-        cout << endl;
+        std::cout << std::endl;
     }
 
     /*
@@ -48,6 +52,7 @@ public:
 
 };
 
+
 void OpenFile()
 {
     ifstream myfile;
@@ -58,7 +63,7 @@ void OpenFile()
 }
 
 //takes string of the input style, outputs recipe name into variable, modifies out vector to be a vector of vectors containing strings
-void InputDataProcessor(std::string const &line, std::string &recipe_name, std::vector<std::vector<std::string>> &out)
+void InputDataProcessor(std::string &line, std::string &recipe_name, std::vector<std::vector<std::string>> &out)
 {
     //takes input in the form of "recipename,{ingredient1;ingredient2;ingredient3},{direction1;direction2;direction3},{keyword1;keyword2}"
     //outputs the recipe name to the recipe_name variable
@@ -157,47 +162,50 @@ void ReadFromFile(vector<Recipe> &results)
 
 }
 
-/*
 
-//Add a new entry to the text file in the form "RecipeName,Ingredients,Descriptor"
+
+//Take user input for each of the paramaters, formats it properly, adds it to the text file and the results vector
 void NewEntry(vector<Recipe> &results)
 {
     string entry {};
     string temp {};
+    string tempoR {};
     cout << "Enter a recipe name: ";
-    cin >> temp;
-    entry.append(temp + ",");
+    getline(cin >> ws, temp);
+    entry.append(temp + ",{");
     temp = {};
 
-    cout << "Enter recipe ingredients: ";
-    cin >> temp;
-    entry.append(temp + ",");
+    cout << "Enter recipe ingredients (ex: ingredient1;ingredient2;ingredient3): ";
+    getline(cin >> ws, temp);
+    entry.append(temp + "},{");
     temp = {};
 
-    cout << "Enter a descriptor: ";
-    cin >> temp;
-    entry.append(temp);
+    cout << "Enter recipe directions (ex: direction1;direction2;direction3): ";
+    getline(cin >> ws, temp);
+    entry.append(temp + "},{");
     temp = {};
 
+    cout << "Enter recipe keywords (ex: keyword1;keyword2;keyword3): ";
+    getline(cin >> ws, temp);
+    entry.append(temp + "}");
+    temp = {};
+
+    //add string to text file
     ofstream myfile;
     myfile.open ("mealprepdata.txt", ios::out | ios::app);
     myfile << entry << endl;
 
-
     cout << "Recipe entered: " << entry << endl;
 
+    //add recipe directly to results vector instead of re-reading file
     int last_line_number {results.size()};
-    Recipe working {};
-    std::vector<std::string> out;
-    delimit(entry, out);
-    working.recipe_name = out[0];
-    working.ingredients = out[1];
-    working.descriptors = out[2];
-    working.line_number = last_line_number + 1;
+    std::vector<std::vector<std::string>> output;
+    Recipe current = BuildRecipeObject(entry, output, last_line_number + 1);
 
-    results.push_back(working);
+    results.push_back(current);
 }
 
+/*
 void WriteResultsToFile(vector<Recipe> &results)
 {
     ofstream myfile ("mealprepdata.txt");
@@ -279,8 +287,6 @@ int main()
     vector<Recipe> results {};
     ReadFromFile(results);
 
-
-    /*
     while (true)  {
 
         PrintUserPrompt();
@@ -291,9 +297,10 @@ int main()
         if (input == 1)   {
             cout << endl;
 
+
             for(int i=0; i < results.size(); i++) {
                 cout << i+1 << ": ";
-                results.at(i).single_line_print();
+                results.at(i).multi_line_print();
             }
 
             continue;
@@ -303,7 +310,7 @@ int main()
                 continue;
 
         }   else if (input == 3)  {
-                EditRecipe(results);
+                //EditRecipe(results);
                 continue;
 
         }   else if (input == 8)  {
@@ -319,7 +326,7 @@ int main()
         }
         return 0;
     }
-    */
+
 }
 
     //For quick reference:
