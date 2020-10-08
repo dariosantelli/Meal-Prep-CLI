@@ -193,19 +193,54 @@ void NewEntry(vector<Recipe> &results)
     results.push_back(current);
 }
 
-/*
+
 void WriteResultsToFile(vector<Recipe> &results)
 {
-    //this needs to take the results vector and re-write the entire thing into the text file
-    //update this for the new format
-    ofstream myfile ("mealprepdata.txt");
-    if (myfile.is_open())   {
+    //Takes each item of the results vector and assembles it back into the original text file format piece by piece
+    //Then it appends that line to the text file and moves on the the next object in the results vector
+
+    ofstream text_file ("mealprepdata.txt");
+    if (text_file.is_open())   {
         for (int i = 0; i < results.size(); i++)  {
-            myfile << results[i].recipe_name << "," << results[i].ingredients << "," << results[i].descriptors << endl;
+            std::string output {};
+
+            //Add recipe name
+            output.append(results[i].recipe_name + ",{");
+
+            //Add ingredients
+            for (int j = 0; j < results[i].ingredients.size(); j++) {
+                output.append(results[i].ingredients[j]);
+                if (j != results[i].ingredients.size()-1) {
+                    output.append(";");
+                }
+            }
+            output.append("},{");
+
+            //Add directions
+            for (int j = 0; j < results[i].directions.size(); j++) {
+                output.append(results[i].directions[j]);
+                if (j != results[i].directions.size()-1) {
+                    output.append(";");
+                }
+            }
+            output.append("},{");
+
+            //Add keywords
+            for (int j = 0; j < results[i].keywords.size(); j++) {
+                output.append(results[i].keywords[j]);
+                if (j != results[i].keywords.size()-1) {
+                    output.append(";");
+                }
+            }
+            output.append("}");
+
+            //Append current working line to text file
+            text_file << output << std::endl;
+
         }
     }
 }
-*/
+
 
 void EditRecipe(std::vector<Recipe> &results)
 {
@@ -277,7 +312,7 @@ void EditRecipe(std::vector<Recipe> &results)
 
     std::cout << std::endl << "Recipe " << entered_line_number << " changed to: " << entry << std::endl;
 
-    //WriteResultsToFile(results);
+    WriteResultsToFile(results);
 
 
 
@@ -346,6 +381,8 @@ int main()
     //Read text file and populate results vector with recipe objects
     vector<Recipe> results {};
     ReadFromFile(results);
+
+
 
     while (true)  {
 
