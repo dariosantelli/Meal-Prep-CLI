@@ -196,6 +196,8 @@ void NewEntry(vector<Recipe> &results)
 /*
 void WriteResultsToFile(vector<Recipe> &results)
 {
+    //this needs to take the results vector and re-write the entire thing into the text file
+    //update this for the new format
     ofstream myfile ("mealprepdata.txt");
     if (myfile.is_open())   {
         for (int i = 0; i < results.size(); i++)  {
@@ -203,49 +205,101 @@ void WriteResultsToFile(vector<Recipe> &results)
         }
     }
 }
+*/
 
-void EditRecipe(vector<Recipe> &results)
+void EditRecipe(std::vector<Recipe> &results)
 {
-    //ask user what recipe they'd like to edit and to enter line number of that recipe
-    //change specific recipe in results vector (ask for each input one by one)
-    //overwrite entire txt file with new results vector
-    cout << endl << "Type the number of the recipe you'd like to edit, then press ENTER" << endl << endl;
+    //Asks the user which recipe (by line #) they'd like to edit and gives all of the standard entry prompts
+    //Function concatenates these entries into the standard input format and uses InputDataProcessor to turn it into a recipe object
+    //This object is then written over the previous object in the results vector
+    //The (now edited) results vector is then written into the text file using WriteResultsToFile()
+
+    std::cout << std::endl << "Type the number of the recipe you'd like to edit, then press ENTER" << std::endl << std::endl;
 
     for(int i=0; i < results.size(); i++) {
-                cout << i+1 << ": ";
+                std::cout << i+1 << ": ";
                 results.at(i).single_line_print();
     }
 
+    //Choose which recipe to edit
     int entered_line_number {};
-    cin >> entered_line_number;
-    cout << endl << "You entered: " << entered_line_number << endl;
+    std::cin >> entered_line_number;
+    std::cout << std::endl << "You entered: " << entered_line_number << std::endl;
 
-    string temp {};
-    cout << endl << "Current recipe name is: " << results[entered_line_number-1].recipe_name << endl;
-    cout << "Enter a new recipe name: ";
-    cin >> temp;
-    results[entered_line_number-1].recipe_name = temp;
+    //Get new recipe name
+    std::string entry {};
+    std::string temp {};
+    std::cout << std::endl << "Current recipe name is: " << results[entered_line_number-1].recipe_name << std::endl;
+    std::cout << "Enter a new recipe name: ";
+    getline(std::cin >> ws, temp);
+    entry.append(temp + ",{");
     temp = {};
 
-    cout << endl << "Current ingredients are: " << results[entered_line_number-1].ingredients << endl;
-    cout << "Enter new ingredients: ";
-    cin >> temp;
-    results[entered_line_number-1].ingredients = temp;
+    //Get new ingredients
+    std::cout << std::endl << "Current ingredients are: " << std::endl;
+    for (int i = 0; i < results[entered_line_number-1].ingredients.size(); i++)    {
+            std::cout << " - " << results[entered_line_number-1].ingredients[i] << std::endl;
+    }
+    std::cout << "Enter new ingredients (ex: ingredient1;ingredient2;ingredient3): ";
+    getline(std::cin >> ws, temp);
+    entry.append(temp + "},{");
     temp = {};
 
-    cout << endl << "Current descriptors are: " << results[entered_line_number-1].descriptors << endl;
-    cout << "Enter new descriptors: ";
-    cin >> temp;
-    results[entered_line_number-1].descriptors = temp;
+    //Get new directions
+    std::cout << std::endl << "Current directions are: " << std::endl;
+    for (int i = 0; i < results[entered_line_number-1].directions.size(); i++)    {
+            std::cout << " - " << results[entered_line_number-1].directions[i] << std::endl;
+    }
+    std::cout << "Enter new directions (ex: direction1;direction2;direction3): ";
+    getline(std::cin >> ws, temp);
+    entry.append(temp + "},{");
     temp = {};
 
-    cout << endl << "Recipe " << entered_line_number << " changed to: ";
-    results[entered_line_number-1].single_line_print();
+    //Get new keywords
+    std::cout << std::endl << "Current keywords are: " << std::endl;
+    for (int i = 0; i < results[entered_line_number-1].keywords.size(); i++)    {
+            std::cout << " - " << results[entered_line_number-1].keywords[i] << std::endl;
+    }
+    std::cout << "Enter new keywords (ex: keyword1;keyword2;keyword3): ";
+    getline(std::cin >> ws, temp);
+    entry.append(temp + "}");
+    temp = {};
 
-    WriteResultsToFile(results);
+    //Take new entries and read them into the results vector
+    std::string dummy_recipe_name {};
+    std::vector<std::vector<std::string>> other_attributes {};
+    InputDataProcessor(entry, dummy_recipe_name, other_attributes);
+    results[entered_line_number-1].recipe_name = dummy_recipe_name;
+    results[entered_line_number-1].ingredients = other_attributes[0];
+    results[entered_line_number-1].directions = other_attributes[1];
+    results[entered_line_number-1].keywords = other_attributes[2];
+    results[entered_line_number-1].line_number = entered_line_number;
 
+    std::cout << std::endl << "Recipe " << entered_line_number << " changed to: " << entry << std::endl;
+
+    //WriteResultsToFile(results);
+
+
+
+
+
+    //displayed the current ingredients, need to have user enter new list of ingredients the same way they do in AddRecipe
+    //then, need to convert
+
+    //need to re-write whole file
+    //I don't want to re-read that whole file, so it's more efficient to just modify the results vector
+
+
+    //enter ingredients in string format
+    //delimit string and place into ingredients vector
+
+    //see if I can insert the raw input text into the text file so I don't have to write a results to text file converter
+
+    //there is no way to insert text at a specific line without having to re-write the results back into the file in some form: I need to write a results to text converter
+
+    //assemble data into input format, then use inputdataprocessor, then set results of string being edited to that
 }
-*/
+
 
 void PrintUserPrompt()
 {
@@ -319,7 +373,7 @@ int main()
                 continue;
 
         }   else if (input == 4)  {
-                //EditRecipe(results);
+                EditRecipe(results);
                 continue;
 
         }   else if (input == 8)  {
