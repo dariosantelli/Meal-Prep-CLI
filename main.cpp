@@ -4,8 +4,6 @@
 #include <vector>
 #include <sstream>
 
-using namespace std;
-
 class Recipe
 {
 public:
@@ -42,13 +40,10 @@ public:
         std::cout << std::endl;
     }
 
-
     void single_line_print()
     {
         std::cout << recipe_name << std::endl;
     }
-
-
 };
 
 //takes string of the input style, outputs recipe name into variable, modifies out vector to be a vector of vectors containing strings
@@ -62,8 +57,8 @@ void InputDataProcessor(std::string &line, std::string &recipe_name, std::vector
 	std::stringstream ss(line); //input line
 	std::string s; //output string
 
-	//delimit input string by commas and store vectored variables in temporary vector
-	while (getline(ss, s, ',')) {
+	//delimit input string by tall line and store vectored variables in temporary vector
+	while (getline(ss, s, '|')) {
         if (s[0] == '{' and s.back() == '}')   {
 
             //removes bracket chars
@@ -75,7 +70,6 @@ void InputDataProcessor(std::string &line, std::string &recipe_name, std::vector
         }
         recipe_name = s;
 	}
-
 
 	//delimit ingredients from temporary vector into individual ingredients vector
 	std::vector<std::string> ingredients {};
@@ -125,15 +119,12 @@ Recipe BuildRecipeObject(std::string line, std::vector<std::vector<std::string>>
 
 }
 
-
-
 //Reads each line of file and creates a recipe object for each, adds these objects to results vector
-void ReadFromFile(vector<Recipe> &results)
+void ReadFromFile(std::vector<Recipe> &results)
 {
-
-    string line;
+    std::string line;
     int line_number = 1;
-    ifstream myfile ("mealprepdata.txt");
+    std::ifstream myfile ("mealprepdata.txt");
     if (myfile.is_open())
     {
         while ( getline (myfile,line) )
@@ -144,46 +135,41 @@ void ReadFromFile(vector<Recipe> &results)
             line_number ++;
 
             results.push_back(current);
-
         }
-
     }
-
 }
 
-
-
 //Take user input for each of the paramaters, formats it properly, adds it to the text file and the results vector
-void NewEntry(vector<Recipe> &results)
+void NewEntry(std::vector<Recipe> &results)
 {
-    string entry {};
-    string temp {};
-    cout << "Enter a recipe name: ";
-    getline(cin >> ws, temp);
-    entry.append(temp + ",{");
+    std::string entry {};
+    std::string temp {};
+    std::cout << "Enter a recipe name: ";
+    getline(std::cin >> std::ws, temp);
+    entry.append(temp + "|{");
     temp = {};
 
-    cout << "Enter recipe ingredients (ex: ingredient1;ingredient2;ingredient3): ";
-    getline(cin >> ws, temp);
-    entry.append(temp + "},{");
+    std::cout << "Enter recipe ingredients (ex: ingredient1;ingredient2;ingredient3): ";
+    getline(std::cin >> std::ws, temp);
+    entry.append(temp + "}|{");
     temp = {};
 
-    cout << "Enter recipe directions (ex: direction1;direction2;direction3): ";
-    getline(cin >> ws, temp);
-    entry.append(temp + "},{");
+    std::cout << "Enter recipe directions (ex: direction1;direction2;direction3): ";
+    getline(std::cin >> std::ws, temp);
+    entry.append(temp + "}|{");
     temp = {};
 
-    cout << "Enter recipe keywords (ex: keyword1;keyword2;keyword3): ";
-    getline(cin >> ws, temp);
+    std::cout << "Enter recipe keywords (ex: keyword1;keyword2;keyword3): ";
+    getline(std::cin >> std::ws, temp);
     entry.append(temp + "}");
     temp = {};
 
     //add string to text file
-    ofstream myfile;
-    myfile.open ("mealprepdata.txt", ios::out | ios::app);
-    myfile << entry << endl;
+    std::ofstream myfile;
+    myfile.open ("mealprepdata.txt", std::ios::out | std::ios::app);
+    myfile << entry << std::endl;
 
-    cout << "Recipe entered: " << entry << endl;
+    std::cout << "Recipe entered: " << entry << std::endl;
 
     //add recipe directly to results vector instead of re-reading file
     int last_line_number {results.size()};
@@ -193,19 +179,18 @@ void NewEntry(vector<Recipe> &results)
     results.push_back(current);
 }
 
-
-void WriteResultsToFile(vector<Recipe> &results)
+void WriteResultsToFile(std::vector<Recipe> &results)
 {
     //Takes each item of the results vector and assembles it back into the original text file format piece by piece
     //Then it appends that line to the text file and moves on the the next object in the results vector
 
-    ofstream text_file ("mealprepdata.txt");
+    std::ofstream text_file ("mealprepdata.txt");
     if (text_file.is_open())   {
         for (int i = 0; i < results.size(); i++)  {
             std::string output {};
 
             //Add recipe name
-            output.append(results[i].recipe_name + ",{");
+            output.append(results[i].recipe_name + "|{");
 
             //Add ingredients
             for (int j = 0; j < results[i].ingredients.size(); j++) {
@@ -214,7 +199,7 @@ void WriteResultsToFile(vector<Recipe> &results)
                     output.append(";");
                 }
             }
-            output.append("},{");
+            output.append("}|{");
 
             //Add directions
             for (int j = 0; j < results[i].directions.size(); j++) {
@@ -223,7 +208,7 @@ void WriteResultsToFile(vector<Recipe> &results)
                     output.append(";");
                 }
             }
-            output.append("},{");
+            output.append("}|{");
 
             //Add keywords
             for (int j = 0; j < results[i].keywords.size(); j++) {
@@ -266,8 +251,8 @@ void EditRecipe(std::vector<Recipe> &results)
     std::string temp {};
     std::cout << std::endl << "Current recipe name is: " << results[entered_line_number-1].recipe_name << std::endl;
     std::cout << "Enter a new recipe name: ";
-    getline(std::cin >> ws, temp);
-    entry.append(temp + ",{");
+    getline(std::cin >> std::ws, temp);
+    entry.append(temp + "|{");
     temp = {};
 
     //Get new ingredients
@@ -276,18 +261,18 @@ void EditRecipe(std::vector<Recipe> &results)
             std::cout << " - " << results[entered_line_number-1].ingredients[i] << std::endl;
     }
     std::cout << "Enter new ingredients (ex: ingredient1;ingredient2;ingredient3): ";
-    getline(std::cin >> ws, temp);
-    entry.append(temp + "},{");
+    getline(std::cin >> std::ws, temp);
+    entry.append(temp + "}|{");
     temp = {};
 
     //Get new directions
     std::cout << std::endl << "Current directions are: " << std::endl;
     for (int i = 0; i < results[entered_line_number-1].directions.size(); i++)    {
-            std::cout << " - " << results[entered_line_number-1].directions[i] << std::endl;
+            std::cout << i + 1 << ". " << results[entered_line_number-1].directions[i] << std::endl;
     }
     std::cout << "Enter new directions (ex: direction1;direction2;direction3): ";
-    getline(std::cin >> ws, temp);
-    entry.append(temp + "},{");
+    getline(std::cin >> std::ws, temp);
+    entry.append(temp + "}|{");
     temp = {};
 
     //Get new keywords
@@ -296,7 +281,7 @@ void EditRecipe(std::vector<Recipe> &results)
             std::cout << " - " << results[entered_line_number-1].keywords[i] << std::endl;
     }
     std::cout << "Enter new keywords (ex: keyword1;keyword2;keyword3): ";
-    getline(std::cin >> ws, temp);
+    getline(std::cin >> std::ws, temp);
     entry.append(temp + "}");
     temp = {};
 
@@ -335,43 +320,42 @@ void EditRecipe(std::vector<Recipe> &results)
     //assemble data into input format, then use inputdataprocessor, then set results of string being edited to that
 }
 
-
 void PrintUserPrompt()
 {
-    cout << endl << "Press a number on the keypad and press enter" << endl;
-    cout << "1: View all recipes at a glance" << endl;
-    cout << "2: View full details of a recipe" << endl;
-    cout << "3: Add a Recipe" << endl;
-    cout << "4: Edit an Existing Recipe" << endl;
-    cout << "8: Tutorial/Help" << endl;
-    cout << "9: Exit Program" << endl << endl;
+    std::cout << std::endl << "Press a number on the keypad and press enter" << std::endl;
+    std::cout << "1: View all recipes at a glance" << std::endl;
+    std::cout << "2: View full details of a recipe" << std::endl;
+    std::cout << "3: Add a recipe" << std::endl;
+    std::cout << "4: Edit an existing recipe" << std::endl;
+    std::cout << "8: Tutorial/Help" << std::endl;
+    std::cout << "9: Exit" << std::endl << std::endl;
 }
 
 void PrintTutorial()
 {
-    //print here
-    cout << endl << endl << "Tutorial/Help" << endl << endl;
-    cout << "This program reads from an associated text file" << endl;
-    cout << "1 - View Recipes: View all recipes available in the storage file" << endl;
-    cout << "2 - Add a Recipe: Follow the prompts to add a recipe to the storage file" << endl;
-    cout << "3 - Edit an Existing Recipe: F" << endl;
-    cout << "8 - Tutorial: This" << endl;
-    cout << "9 - Exit Program: Exit" << endl;
+    std::cout << std::endl << std::endl << "Tutorial/Help" << std::endl << std::endl;
+    std::cout << "This program reads from an associated text file named 'mealprepdata.txt'." << std::endl;
+    std::cout << "1 - View all available recipes by name" << std::endl;
+    std::cout << "2 - Enter a specific recipe to view its full details" << std::endl;
+    std::cout << "3 - Add a recipe by following the prompts and example entries" << std::endl;
+    std::cout << "4 - Edit an existing recipe" << std::endl;
+    std::cout << "8 - View tutorial" << std::endl;
+    std::cout << "9 - Exit Program" << std::endl;
 }
 
-void ViewFullRecipe(vector<Recipe> &results)
+void ViewFullRecipe(std::vector<Recipe> &results)
 {
     //NEED TO ADD CATCH FOR OUT OF BOUND NUMBERS
-    cout << endl << "Type the number of the recipe you'd like to view, then press ENTER" << endl << endl;
+    std::cout << std::endl << "Type the number of the recipe you'd like to view, then press ENTER" << std::endl << std::endl;
 
     for(int i=0; i < results.size(); i++) {
-                cout << i+1 << ": ";
+                std::cout << i+1 << ": ";
                 results.at(i).single_line_print();
     }
 
     int entered_line_number {};
-    cin >> entered_line_number;
-    cout << endl << "You entered: " << entered_line_number << endl;
+    std::cin >> entered_line_number;
+    std::cout << std::endl << "You entered: " << entered_line_number << std::endl;
 
     results.at(entered_line_number-1).multi_line_print();
 }
@@ -379,23 +363,21 @@ void ViewFullRecipe(vector<Recipe> &results)
 int main()
 {
     //Read text file and populate results vector with recipe objects
-    vector<Recipe> results {};
+    std::vector<Recipe> results {};
     ReadFromFile(results);
-
-
 
     while (true)  {
 
         PrintUserPrompt();
 
         int input {};
-        cin >> input;
+        std::cin >> input;
 
         if (input == 1)   {
-            cout << endl;
+            std::cout << std::endl;
 
             for(int i=0; i < results.size(); i++) {
-                cout << i+1 << ": ";
+                std::cout << i+1 << ": ";
                 results.at(i).single_line_print();
             }
 
@@ -421,12 +403,11 @@ int main()
                 break;
 
         }   else {
-                cout << endl << "Invalid number entered, try again." << endl;
+                std::cout << std::endl << "Invalid number entered, try again." << std::endl;
                 continue;
         }
         return 0;
     }
-
 }
 
     //For quick reference:
