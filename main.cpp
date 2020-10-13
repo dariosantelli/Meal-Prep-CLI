@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <limits>
 
 class Recipe
 {
@@ -241,10 +242,28 @@ void EditRecipe(std::vector<Recipe> &results)
                 results.at(i).single_line_print();
     }
 
-    //Choose which recipe to edit
     int entered_line_number {};
-    std::cin >> entered_line_number;
-    std::cout << std::endl << "You entered: " << entered_line_number << std::endl;
+
+    while (true)    {
+
+        std::cin >> entered_line_number;
+        if (entered_line_number >= results.front().line_number && entered_line_number <= results.back().line_number)    {
+            std::cout << std::endl << "You entered: " << entered_line_number << std::endl;
+            break;
+
+        }   else    {
+
+            std::cout << std::endl << "Invalid line number entered. Type the number of the recipe you'd like to view, then press ENTER" << std::endl << std::endl;
+            for(int i=0; i < results.size(); i++) {
+                std::cout << i+1 << ": ";
+                results.at(i).single_line_print();
+            }
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+
+        }
+    }
 
     //Get new recipe name
     std::string entry {};
@@ -345,7 +364,6 @@ void PrintTutorial()
 
 void ViewFullRecipe(std::vector<Recipe> &results)
 {
-    //NEED TO ADD CATCH FOR OUT OF BOUND NUMBERS
     std::cout << std::endl << "Type the number of the recipe you'd like to view, then press ENTER" << std::endl << std::endl;
 
     for(int i=0; i < results.size(); i++) {
@@ -354,8 +372,30 @@ void ViewFullRecipe(std::vector<Recipe> &results)
     }
 
     int entered_line_number {};
-    std::cin >> entered_line_number;
-    std::cout << std::endl << "You entered: " << entered_line_number << std::endl;
+
+    //Catch line number out of bound conditions
+    while (true)    {
+
+        std::cin >> entered_line_number;
+
+        if (entered_line_number >= results.front().line_number && entered_line_number <= results.back().line_number)    {
+
+            std::cout << std::endl << "You entered: " << entered_line_number << std::endl;
+            break;
+
+        }   else    {
+
+            std::cout << std::endl << "Invalid line number entered. Type the number of the recipe you'd like to view, then press ENTER" << std::endl << std::endl;
+            for(int i=0; i < results.size(); i++) {
+                std::cout << i+1 << ": ";
+                results.at(i).single_line_print();
+            }
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+    }
+
+
 
     results.at(entered_line_number-1).multi_line_print();
 }
@@ -371,6 +411,7 @@ int main()
         PrintUserPrompt();
 
         int input {};
+
         std::cin >> input;
 
         if (input == 1)   {
@@ -404,6 +445,11 @@ int main()
 
         }   else {
                 std::cout << std::endl << "Invalid number entered, try again." << std::endl;
+
+                //in case a non-number is entered, this catches it and causes program to run properly
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
                 continue;
         }
         return 0;
